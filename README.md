@@ -1,0 +1,2 @@
+# Relational_Database_CRUD
+This is a demonstration of CRUD activities using MySQL and NodeJS with AJAX. Front end forms are used to add users as well as their home and shipping address. These three tables are linked using foreign keys. Updating is done on specific details using buttons and hard coded changes. Any table can be displayed in a text box using a button to retrieve. A delete button deletes the last user from the table and any associated address details from other tables. 
