@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html>
+
+<!--
+    CS230 Assignment 4-Emmett Mulroy (67578687)
+
+    front end modified from CS230 examples, title form taken from W3schools and modified.
+    Application of form to AJAX taken from here:
+    https://learn.jquery.com/using-jquery-core/faq/how-do-i-get-the-text-value-of-a-selected-option/
+    AJAX for Update and Delete also from W3Schools:
+    https://www.w3schools.com/xml/ajax_intro.asp
+
+-->
+<head>
+    <title>CRUD demonstration</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Use Bootstrap for the form styling -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <!-- Use W3.CSS for the Modal -->
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!-- jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <style>
+        /* Extra Styles for the Bootstrap Forms */
+        h1 {
+            font: 30px Verdana;
+            text-align: center;
+        }
+        h2 {
+            font: 20px Verdana;
+            text-align: center;
+        }
+        h3 {
+            font: 20px Verdana;
+            text-align: center;
+        }
+        legend {
+            padding: 10px;
+            font: 30px Verdana
+        }
+    </style>
+</head>
+
+<body>
+<h1>Assignment 4-CS230</h1>
+<h2>Emmett Mulroy-67578687</h2>
+<h2>Add users to send to the database, display the database, use buttons to automatically update and delete users</h2>
+<h3>Please add a user first, followed by the home and shipping addresses you want this user to have</h3>
+
+
+    <!--Useful References:
+
+    HTTP POST Request Method: https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/POST
+    HTTP GET Request Method:  https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/GET
+
+    There are other HTTP Request Method verbs; you can read about them on MDN Web Docs also.
+
+    HTTP request methods:     https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods
+
+    W3Schools.com has an excellent tutorial on the <form> element.
+    It is located here:       https://www.w3schools.com/tags/tag_form.asp--->
+
+<br />
+
+<!--
+    Bootstrap Styled Form: Add User to Database
+    Generated using the Bootsnipp Form Builder and Generator for Bootstrap
+    https://bootsnipp.com/forms
+-->
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="addUserForm" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Add User to Database</legend>
+
+                    <!-- Text Input - Title -->
+                    <!-- form from W3schools -->
+                    <div class="form-group">
+                        <label for="title">Select your title:</label>
+                        <select name="title" id="title">
+                            <option value="Mx">Mx</option>
+                            <option value="Mr">Mr</option>
+                            <option value="Ms">Ms</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                            <option value="Dr">Dr</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <!-- Text Input - First Name -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="firstname">First Name</label>
+                        <div class="col-md-4">
+                            <input id="firstname" name="firstname" placeholder="First Name"
+                                   class="form-control input-md">
+                            <span class="help-block">Please enter your first name!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Surname -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="surname">Surname</label>
+                        <div class="col-md-4">
+                            <input id="surname" name="surname" type="text" placeholder="Surname"
+                                   class="form-control input-md">
+                            <span class="help-block">Please enter your Surname!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Mobile -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="mobile">Mobile</label>
+                        <div class="col-md-4">
+                            <input id="mobile" name="mobile" placeholder="Mobile"
+                                   class="form-control input-md">
+                            <span class="help-block">Please enter your mobile!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Email -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="email">Email</label>
+                        <div class="col-md-4">
+                            <input id="email" name="email" type="text" placeholder="email"
+                                   class="form-control input-md">
+                            <span class="help-block">Please enter your Email address!</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Send User Data" class="btn btn-primary">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="addHomeAddressForm" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Add Home Address for last entered user</legend>
+
+                    <!-- Text Input - First Line -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="line1">Line 1</label>
+                        <div class="col-md-4">
+                            <input id="line1" name="line1" placeholder="Line 1"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter the first line of your address!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Second Line -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="line2">Line 2</label>
+                        <div class="col-md-4">
+                            <input id="line2" name="line2" placeholder="Line 2"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter the second line of your address!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Town -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="town">Town</label>
+                        <div class="col-md-4">
+                            <input id="town" name="town" type="text" placeholder="Town"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter your town!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - County -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="county">County</label>
+                        <div class="col-md-4">
+                            <input id="county" name="county" placeholder="County"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter your county!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Eircode -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="eircode">Eircode</label>
+                        <div class="col-md-4">
+                            <input id="eircode" name="eircode" type="text" placeholder="eircode"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter your eircode!</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Send User Home Address" class="btn btn-primary">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="addShippingAddressForm" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Add Shipping Address for last entered user</legend>
+
+                    <!-- Text Input - First Line -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="sline1">Line 1</label>
+                        <div class="col-md-4">
+                            <input id="sline1" name="sline1" placeholder="Line 1"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter the first line of your address!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Second Line -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="sline2">Line 2</label>
+                        <div class="col-md-4">
+                            <input id="sline2" name="sline2" placeholder="Line 2"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter the second line of your address!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Town -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="stown">Town</label>
+                        <div class="col-md-4">
+                            <input id="stown" name="stown" type="text" placeholder="Town"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter your town!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - County -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="scounty">County</label>
+                        <div class="col-md-4">
+                            <input id="scounty" name="scounty" placeholder="County"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter your county!</span>
+                        </div>
+                    </div>
+
+                    <!-- Text Input - Eircode -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="seircode">Eircode</label>
+                        <div class="col-md-4">
+                            <input id="seircode" name="seircode" type="text" placeholder="eircode"
+                                   class="form-control input-md">
+                            <span class="help-block">Enter your eircode!</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Send User Shipping Address" class="btn btn-primary">
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<br />
+
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="updateUser" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Update Database</legend>
+
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="updateUser">This button will change the last users title to Dr, Mobile to 0874125874, Email to drluser@gmail.com, and Eircode to FF11KKll</label>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Update last user" class="btn btn-primary">
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--
+    Bootstrap Styled Form: Add User to Database
+    Generated using the Bootsnipp Form Builder and Generator for Bootstrap
+    https://bootsnipp.com/forms
+-->
+
+<!--Show Users--->
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="getUserDatabaseForm" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Show User Database</legend>
+
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="showUserDatabase">User Database</label>
+                        <div class="col-md-4">
+                                <textarea class="form-control" id="showUserDatabase"
+                                          name="showUserDatabase">Retrieved Database displayed here!</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Get User Database" class="btn btn-primary">
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Show Home Addresses-->
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="getHomeAddresses" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Show Home Address Database</legend>
+
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="showHomeAddresses">Home Address Database</label>
+                        <div class="col-md-4">
+                                <textarea class="form-control" id="showHomeAddresses"
+                                          name="showHomeAddresses">Retrieved Database displayed here!</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Get Home Addresses" class="btn btn-primary">
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Show Shipping Addresses--->
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="getShippingAddresses" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Show Shipping Addresses</legend>
+
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="showShippingAddresses">Shipping Address Database</label>
+                        <div class="col-md-4">
+                                <textarea class="form-control" id="showShippingAddresses"
+                                          name="showShippingAddresses">Retrieved Database displayed here!</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Get Shipping Addresses" class="btn btn-primary">
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div>
+    <div class="container">
+        <div class="row justify-content-center">
+            <form id="deleteUser" class="form-horizontal">
+                <fieldset>
+                    <!-- Form Name -->
+                    <legend>Delete User from Database</legend>
+
+                    <!-- Textarea -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="deleteUser">This button will delete the last user in the table</label>
+                    </div>
+
+                    <!-- Submit -->
+                    <div class="form-group">
+                        <label class="col-md-4 control-label" for="submit"></label>
+                        <div class="col-md-4">
+                            <input type="submit" value="Delete last user" class="btn btn-primary">
+                        </div>
+                    </div>
+
+                </fieldset>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--
+    Modal Popup used to confirm User Data was sent and added to Database
+    W3.CSS Styled Form generated using W3.CSS modal demos
+    https://www.w3schools.com/w3css/w3css_modal.asp
+-->
+<div id="modalUserAdded" class="w3-modal w3-animate-opacity">
+    <div class="w3-modal-content w3-card-4">
+        <header class="w3-container w3-blue-grey">
+                <span onclick="document.getElementById('modalUserAdded').style.display='none'"
+                      class="w3-button w3-large w3-display-topright">&times;</span>
+            <h2>User Added to Database!</h2>
+        </header>
+        <div class="w3-container">
+            <p></p>
+            <p id="modalUserAddedMessage">Message Text</p>
+        </div>
+        <footer class="w3-container w3-blue-grey">
+            <p></p>
+        </footer>
+    </div>
+</div>
+
+<!--
+    jQuery Scripts used to implement form processing and Ajax functionality
+    https://www.w3schools.com/w3css/w3css_modal.asp
+-->
+<script>
+    $(document).ready(function () {
+
+        //logic from examples repeated in extra functionalities
+        // handle "Add User to Database" submit button click
+        //https://learn.jquery.com/using-jquery-core/faq/how-do-i-get-the-text-value-of-a-selected-option/ for title form
+        $('#addUserForm').submit(function (e) {
+            var user = {
+                title: $("#title").val(),
+                firstname: $('input[name=firstname]').val(),
+                surname: $('input[name=surname]').val(),
+                mobile: $('input[name=mobile]').val(),
+                email: $('input[name=email]').val(),
+            };
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8000/api/user',
+                data: user
+            })
+                .done(function (data) {
+                    // reset the form for next time!
+                    $("#title").val('');
+                    $('input[name=firstname]').val('');
+                    $('input[name=surname]').val('');
+                    $('input[name=mobile]').val('');
+                    $('input[name=email]').val('');
+                    // show confirmation message from API
+                    showUserModal(data);
+                    console.log(data);
+                });
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        // handle "Add Home Address to Previous User"
+        $('#addHomeAddressForm').submit(function (e) {
+            var home = {
+                line1: $('input[name=line1]').val(),
+                line2: $('input[name=line2]').val(),
+                town: $('input[name=town]').val(),
+                county: $('input[name=county]').val(),
+                eircode: $('input[name=eircode]').val(),
+            };
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8000/api/homeaddress',
+                data: home
+            })
+                .done(function (data) {
+                    // reset the form for next time!
+                    $('input[name=line1]').val('');
+                    $('input[name=line2]').val('');
+                    $('input[name=town]').val('');
+                    $('input[name=county]').val('');
+                    $('input[name=eircode]').val('');
+                    // show confirmation message from API
+                    showUserModal(data);
+                });
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        // handle "Add Shipping Address to Previous User"
+        $('#addShippingAddressForm').submit(function (e) {
+            var ship = {
+                sline1: $('input[name=sline1]').val(),
+                sline2: $('input[name=sline2]').val(),
+                stown: $('input[name=stown]').val(),
+                scounty: $('input[name=scounty]').val(),
+                seircode: $('input[name=seircode]').val(),
+            };
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8000/api/shippingaddress',
+                data: ship
+            })
+                .done(function (data) {
+                    // reset the form for next time!
+                    $('input[name=sline1]').val('');
+                    $('input[name=sline2]').val('');
+                    $('input[name=stown]').val('');
+                    $('input[name=scounty]').val('');
+                    $('input[name=seircode]').val('');
+                    // show confirmation message from API
+                    showUserModal(data);
+                });
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        // handle "Get User Database" submit button click
+        $('#getUserDatabaseForm').submit(function (e) {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8000/api/user'
+            })
+                .done(function (data) {
+                    // display the database in the textarea and trigger an input change event
+                    $('#showUserDatabase').val(JSON.stringify(data, null, 2)).trigger('input');
+                });
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        // some fun jQuery here that is not necessary for operation
+        // this sets an event handler to resize the textarea after
+        // a change event is triggered the call is triggered earlier
+        // after the content received from the API is written to the
+        // textarea it resizes to the size of the contained text
+        // just a vanity addition really!
+        $("#showUserDatabase").on("input", function () {
+            this.style.height = (this.scrollHeight) + "px;overflow-y:hidden;";
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+
+        //Handle get home address
+        $('#getHomeAddresses').submit(function (e) {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8000/api/homeaddress'
+            })
+                .done(function (data) {
+                    // display the database in the textarea and trigger an input change event
+                    $('#showHomeAddresses').val(JSON.stringify(data, null, 2)).trigger('input');
+                });
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        // some fun jQuery here that is not necessary for operation
+        // this sets an event handler to resize the textarea after
+        // a change event is triggered the call is triggered earlier
+        // after the content received from the API is written to the
+        // textarea it resizes to the size of the contained text
+        // just a vanity addition really!
+        $("#showHomeAddresses").on("input", function () {
+            this.style.height = (this.scrollHeight) + "px;overflow-y:hidden;";
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+
+        //Handle get shipping address
+        $('#getShippingAddresses').submit(function (e) {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8000/api/shippingaddress'
+            })
+                .done(function (data) {
+                    // display the database in the textarea and trigger an input change event
+                    $('#showShippingAddresses').val(JSON.stringify(data, null, 2)).trigger('input');
+                });
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        // some fun jQuery here that is not necessary for operation
+        // this sets an event handler to resize the textarea after
+        // a change event is triggered the call is triggered earlier
+        // after the content received from the API is written to the
+        // textarea it resizes to the size of the contained text
+        // just a vanity addition really!
+        $("#showShippingAddresses").on("input", function () {
+            this.style.height = (this.scrollHeight) + "px;overflow-y:hidden;";
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+
+        //delete
+       /*$('#deleteUser').submit(function (e) {
+            $.ajax({
+                type: 'GET',
+                url: 'http://localhost:8000/api/deleteUser'
+            })
+
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });*/
+        $('#deleteUser').submit(function (e) {
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8000/api/deleteUser'
+            }).done(function() {
+                console.log("Deleted last user");
+            });
+
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+        $('#updateUser').submit(function (e) {
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:8000/api/updateUser'
+            }).done(function() {
+                console.log("Updated last user");
+            });
+
+            e.preventDefault(); // when method is called, the default action of the event will not be triggered.
+                                // meand that clicked submit button will not take the browser to a new URL.
+        });
+
+    });
+
+
+
+    // Show the "User Added" Modal - this is a basic demo - change it!
+    function showUserModal(data) {
+        document.getElementById('modalUserAddedMessage').innerHTML = data;
+        document.getElementById('modalUserAdded').style.display = 'block';
+    }
+
+    /*$.ajax({
+        url: 'http://localhost:8000/api/remover',
+        type: 'DELETE',
+        data: {movie:movie}, //<-----this should be an object.
+        contentType:'application/json',  // <---add this
+        dataType: 'text',                // <---update this
+        success: function(result) {...},
+        error: function(result){...}
+    });*/
+
+</script>
+
+</body>
+
+</html>
